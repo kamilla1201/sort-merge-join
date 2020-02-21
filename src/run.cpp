@@ -63,11 +63,11 @@ T get_insance_from_tuple(const string& line) {
 
 void merge() {
   cout << "Merging tables" << endl;
-  vector<ifstream> emp_runs;
-  vector<ifstream> dept_runs;
-  emp_runs.push_back(ifstream("Emp0"));
-  emp_runs.push_back(ifstream("Emp1"));
-  dept_runs.push_back(ifstream("Dept0"));
+  vector<ifstream*> emp_runs;
+  vector<ifstream*> dept_runs;
+  emp_runs.push_back(new ifstream("Emp0"));
+  emp_runs.push_back(new ifstream("Emp1"));
+  dept_runs.push_back(new ifstream("Dept0"));
 
   vector<Employee> employees;
   vector<Department> departments;
@@ -77,12 +77,12 @@ void merge() {
 
   // from each run upload the smallest value
   for (int i = 0; i < emp_runs.size(); ++i) {
-    if (getline(emp_runs[i], line)) {
+    if (getline(*emp_runs[i], line)) {
       employees.push_back(get_insance_from_tuple<Employee>(line));
     }
   }
   for (int i = 0; i < dept_runs.size(); ++i) {
-    if (getline(dept_runs[i], line)) {
+    if (getline(*dept_runs[i], line)) {
       departments.push_back(get_insance_from_tuple<Department>(line));
     }
   }
@@ -100,7 +100,7 @@ void merge() {
       }
       if (minId >= departments[deptInd].getManagerId()) {
         departments.erase(departments.begin() + deptInd);
-        if (getline(dept_runs[deptInd], line)) {
+        if (getline(*dept_runs[deptInd], line)) {
           departments.insert(departments.begin() + deptInd, get_insance_from_tuple<Department>(line));
         }
       }
@@ -110,13 +110,13 @@ void merge() {
     }
     // uploading new value instead of minId
     employees.erase(employees.begin() + minEmpInd);
-    if (getline(emp_runs[minEmpInd], line)) {
+    if (getline(*emp_runs[minEmpInd], line)) {
       employees.insert(employees.begin() + minEmpInd, get_insance_from_tuple<Employee>(line));
     }
   }
-  emp_runs[0].close();
-  emp_runs[1].close();
-  dept_runs[0].close();
+  emp_runs[0]->close();
+  emp_runs[1]->close();
+  dept_runs[0]->close();
   output.close();
   cout << "Results are saved to Result.csv" << endl;
 }
